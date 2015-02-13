@@ -35,11 +35,18 @@
      (cons (.next it) (lazy-iterate it)))))
 
 (defn messages
-  "Creates a sequence of KafkaMessage messages from the given topic. Consumes
-   messages from a single stream."
+  "Creates a sequence of KafkaMessage messages from the given stream."
+  [^KafkaStream stream]
+  (map to-clojure
+       (lazy-iterate (.iterator ^KafkaStream stream))))
+
+(defn message-streams
+  "Creates a sequence of sequences of KafkaMessage messages from the given
+   topic. The number of KafkaMessages sequences is determined by the number of
+   threads passed in, or defaults to 1."
   [^ConsumerConnector consumer topic & {:keys [threads]
                                         :or   {threads 1}}]
-  (let [[_topic [stream & _]]
-        (first (.createMessageStreams consumer {topic (int threads)}))]
-    (map to-clojure
-         (lazy-iterate (.iterator ^KafkaStream stream)))))
+  (->> (.createMessageStreams consumer {topic (int threads)})
+       (vals)
+       (first)
+       (map messages)))

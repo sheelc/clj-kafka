@@ -34,7 +34,7 @@
       zk/shutdown
       (let [p (producer producer-config)]
         (send-messages p messages)
-        (first (zk/messages c "test"))))))
+        (ffirst (zk/message-streams c "test"))))))
 
 (given (send-and-receive [(test-message)])
        (expect :topic "test"
