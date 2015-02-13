@@ -20,6 +20,7 @@
                com.sun.jmx/jmxri
                jline/jline]
   :plugins [[lein-expectations "0.0.8"]]
+  :aot [clj-kafka.test.round-robin-partitioner]
   :profiles {:dev {:dependencies [[commons-io/commons-io "2.4"]
                                   [expectations "1.4.45"]
                                   [org.slf4j/slf4j-simple "1.6.4"]]}}

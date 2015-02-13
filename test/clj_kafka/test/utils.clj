@@ -65,11 +65,12 @@
   `(do (FileUtils/deleteDirectory (file (tmp-dir)))
        (let [zk# (create-zookeeper ~config)
              kafka# (create-broker ~config)
-             topic# (:topic ~config)]
+             topic# (:topic ~config)
+             topic-options# (or (:topic-options ~config) {})]
          (try
            (.startup kafka#)
            (let [zk-client# (ZkClient. (str "127.0.0.1:" (:zookeeper-port ~config)) 500 500 string-serializer)]
-             (create-topic zk-client# topic#)
+             (create-topic zk-client# topic# :partitions 2)
              (wait-until-initialised kafka# topic#)
              ~@body)
            (finally (do (.shutdown kafka#)
